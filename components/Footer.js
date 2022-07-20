@@ -12,11 +12,25 @@ const Footer = () => {
       py={6}
       borderTop={1}
       borderStyle="solid"
+      bg="white"
       align="center"
       width="100%"
+      boxShadow="0 1px 1px #c8c8c8"
     >
       <Flex mb={3}>
-        <Flex mx={[2, 2, 3]}>
+        <Flex
+          mx={[2, 2, 3]}
+          sx={{
+            a: {
+              transition: "ease-in-out",
+              transitionDuration: "300ms",
+              color: "black",
+              _hover: {
+                color: "orange.500",
+              },
+            },
+          }}
+        >
           <a
             href="https://github.com/GAlcaraz"
             target="_blank"
