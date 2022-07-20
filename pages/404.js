@@ -6,12 +6,7 @@ export default function Custom404() {
   return (
     <Flex flex={1} justifyContent="center" alignItems="center">
       <Box mx={3}>
-        <Flex
-          minH="50vh"
-          align="center"
-          justify="center"
-          flexDirection={"column"}
-        >
+        <Flex flex={1} align="center" justify="center" flexDirection={"column"}>
           <Text fontSize={["xl", "3xl", "5xl"]} fontWeight={700} mb={4}>
             Oops! The page you&apos;re looking for can&apos;t be found.
           </Text>
