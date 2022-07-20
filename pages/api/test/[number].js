@@ -86,7 +86,6 @@ export default function handler(req, res) {
             " " +
             Scale[n.length - pos - 1]; // add corresponding scale to triplet
         }
-        console.log(out);
       }),
       out.replace(/\s+/g, " ").trim() // tidy up whitespaces
     );
