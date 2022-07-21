@@ -5,7 +5,6 @@
         "module": "commonjs",
         "target": "es6",
         "allowSyntheticDefaultImports": true,
-        "checkJs": true
     },
     "exclude": [
         "node_modules"
