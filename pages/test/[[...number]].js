@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import TextInput from "components/forms/TextInput";
+import { integerToWords } from "pages/api/convert";
 
 const schema = Yup.object().shape({
   number: Yup.number()
@@ -12,49 +13,20 @@ const schema = Yup.object().shape({
     .positive("Must be a positive number"),
 });
 
-export default function Layout(props) {
+export default function Layout({ number, words, ...props }) {
   const router = useRouter();
-  const [number, setNumber] = useState();
-  const [words, setWords] = useState();
   const toast = useToast();
 
   useEffect(() => {
-    const num = router.query.number;
-    if (!num) {
-      return;
-    }
-
-    const getNumberToWords = async () => {
-      if (isNaN(num) || !Number.isInteger(parseInt(num)) || parseInt(num) < 0) {
-        toast({
-          title: "Query string is not a valid number",
-          status: "error",
-          isClosable: true,
-          position: "top",
-        });
-        return null;
-      } else {
-        // @ts-ignore
-        setNumber(num);
-      }
-      const response = await fetch(`/api/test/${num}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+    if (!number && router.query.number) {
+      toast({
+        title: "Query string is not a valid number",
+        status: "error",
+        isClosable: true,
+        position: "top",
       });
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-
-      const res = await response.json();
-      console.log(res);
-      setWords(res?.number);
-    };
-
-    getNumberToWords();
-  }, [router.query.number, toast]);
+    }
+  }, [number, toast, router.query.number]);
 
   return (
     <Flex
@@ -68,7 +40,6 @@ export default function Layout(props) {
     >
       <Text
         textAlign="center"
-        justify="center"
         fontSize={{ base: "2xl", sm: "4xl" }}
         color="black"
         mb={12}
@@ -81,7 +52,7 @@ export default function Layout(props) {
         }}
         validationSchema={schema}
         onSubmit={(values) => {
-          router.push(`/test/${values.number}`, undefined, { shallow: true });
+          router.push(`/test/${values.number}`, undefined, { shallow: false });
         }}
         enableReinitialize={true}
       >
@@ -112,3 +83,24 @@ export default function Layout(props) {
     </Flex>
   );
 }
+
+export const getServerSideProps = async (ctx) => {
+  const num = ctx.query.number;
+
+  if (!num) {
+    return {
+      props: {},
+    };
+  }
+
+  if (isNaN(num) || !Number.isInteger(parseInt(num)) || parseInt(num) < 0) {
+    return {
+      props: { words: null, number: null },
+    };
+  }
+  const words = integerToWords(num);
+
+  return {
+    props: { words: words, number: num },
+  };
+};
