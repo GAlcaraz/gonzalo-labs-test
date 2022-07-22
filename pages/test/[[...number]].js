@@ -48,13 +48,13 @@ export default function Layout({ number, words, ...props }) {
       </Text>
       <Formik
         initialValues={{
-          number,
+          number: number || "",
         }}
         validationSchema={schema}
         onSubmit={(values) => {
           router.push(`/test/${values.number}`, undefined, { shallow: false });
         }}
-        enableReinitialize={true}
+        // enableReinitialize={true}
       >
         {({ handleSubmit }) => {
           return (
