@@ -188,7 +188,7 @@ export default function Home() {
               </Button>
             </a>
             <a
-              href="https://github.com/GAlcaraz/BuyMeACoffee"
+              href="https://github.com/GAlcaraz/BuyMeACoffee-contracts"
               target="_blank"
               rel="noreferrer"
             >
