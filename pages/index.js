@@ -11,10 +11,12 @@ import {
   createIcon,
   Icon,
 } from "@chakra-ui/react";
+import { NextSeo } from "next-seo";
 
 export default function Home() {
   return (
     <Container flex={1} maxW={"7xl"}>
+      <NextSeo title="Gonzalo's Labs" description="Personal showcase site." />
       <Heading
         mt={12}
         align="center"
