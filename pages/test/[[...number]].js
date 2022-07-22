@@ -5,6 +5,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import TextInput from "components/forms/TextInput";
 import { integerToWords } from "pages/api/convert";
+import { NextSeo } from "next-seo";
 
 const schema = Yup.object().shape({
   number: Yup.number()
@@ -29,58 +30,66 @@ export default function Layout({ number, words, ...props }) {
   }, [number, router.query.number]);
 
   return (
-    <Flex
-      flex={1}
-      direction="column"
-      align="center"
-      justify="center"
-      m="0 auto"
-      px={6}
-      {...props}
-    >
-      <Text
-        textAlign="center"
-        fontSize={{ base: "2xl", sm: "4xl" }}
-        color="black"
-        mb={12}
+    <>
+      <NextSeo
+        title="Gonzalo's Labs - Numbers Test"
+        description="API Route showcase."
+      />
+      <Flex
+        flex={1}
+        direction="column"
+        align="center"
+        justify="center"
+        m="0 auto"
+        px={6}
+        {...props}
       >
-        {words}
-      </Text>
-      <Formik
-        initialValues={{
-          number: number || "",
-        }}
-        validationSchema={schema}
-        onSubmit={(values) => {
-          router.push(`/test/${values.number}`, undefined, { shallow: false });
-        }}
-        // enableReinitialize={true}
-      >
-        {({ handleSubmit }) => {
-          return (
-            <form onSubmit={handleSubmit}>
-              <Flex direction="column">
-                <TextInput
-                  name="number"
-                  label="Enter your positive integer"
-                  type="number"
-                  placeholder=""
-                  mb={3}
-                />
-                <Button
-                  size="lg"
-                  colorScheme="orange"
-                  borderRadius="md"
-                  type="submit"
-                >
-                  Convert
-                </Button>
-              </Flex>
-            </form>
-          );
-        }}
-      </Formik>
-    </Flex>
+        <Text
+          textAlign="center"
+          fontSize={{ base: "2xl", sm: "4xl" }}
+          color="black"
+          mb={12}
+        >
+          {words}
+        </Text>
+        <Formik
+          initialValues={{
+            number: number || "",
+          }}
+          validationSchema={schema}
+          onSubmit={(values) => {
+            router.push(`/test/${values.number}`, undefined, {
+              shallow: false,
+            });
+          }}
+          // enableReinitialize={true}
+        >
+          {({ handleSubmit }) => {
+            return (
+              <form onSubmit={handleSubmit}>
+                <Flex direction="column">
+                  <TextInput
+                    name="number"
+                    label="Enter your positive integer"
+                    type="number"
+                    placeholder=""
+                    mb={3}
+                  />
+                  <Button
+                    size="lg"
+                    colorScheme="orange"
+                    borderRadius="md"
+                    type="submit"
+                  >
+                    Convert
+                  </Button>
+                </Flex>
+              </form>
+            );
+          }}
+        </Formik>
+      </Flex>
+    </>
   );
 }
 
