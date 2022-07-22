@@ -16,22 +16,21 @@ const Dashboard = () => {
   const [buttonAddLoading, setButtonAddLoading] = useState(false);
   const [buttonSwitchLoading, setButtonSwitchLoading] = useState(false);
 
-  useEffect(() => {
+  const connectWallet = useCallback(async () => {
     if (!metaState.isConnected && metaState.isAvailable) {
       (async () => {
         try {
           await connect(ethers.providers.Web3Provider, "any");
         } catch (e) {
-          toast({
-            title: e.message,
-            status: "error",
-            isClosable: true,
-            position: "top",
-          });
+          console.log(e);
         }
       })();
     }
-  }, [metaState.isAvailable, connect, metaState, toast]);
+  }, [connect, metaState.isAvailable, metaState.isConnected]);
+
+  useEffect(() => {
+    connectWallet();
+  }, [connectWallet]);
 
   const addTestnet = useCallback(async () => {
     setButtonAddLoading(true);
@@ -106,13 +105,9 @@ const Dashboard = () => {
           colorScheme="orange"
           borderRadius="md"
           type="submit"
-          onClick={() => {
-            if (metaState.isConnected) {
-              console.log(metaState.web3);
-            }
-          }}
+          onClick={connectWallet}
         >
-          {metaState.isAvailable ? "Connected" : "Connect Wallet"}
+          {metaState.isConnected ? "Connected" : "Connect Wallet"}
         </Button>
         <Stack direction={["column", "row"]} spacing={2}>
           <Button
