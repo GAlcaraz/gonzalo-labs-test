@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 
 const Header = () => {
   const { isOpen, onToggle } = useDisclosure();
+  const router = useRouter();
 
   const navItems = [
     {
@@ -42,12 +43,36 @@ const Header = () => {
         bg="white"
       >
         <Flex justify="start">
-          <Icon
-            as={FontAwesomeIcon}
-            color="orange.400"
-            icon={faBitcoin}
-            size="2x"
-          />
+          <Link href="/">
+            <Flex
+              direction="row"
+              align="center"
+              justify="center"
+              cursor="pointer"
+            >
+              <Icon
+                as={FontAwesomeIcon}
+                color="orange.400"
+                icon={faBitcoin}
+                size="2x"
+              />
+              <Text
+                color={router.pathname === "/" ? "orange.900" : "orange.500"}
+                _hover={{
+                  color: "orange.700",
+                }}
+                _after={{
+                  content: '""',
+                  height: "1px",
+                  display: router.pathname === "/" ? "block" : "none",
+                  backgroundColor: "orange.900",
+                }}
+                ml={3}
+              >
+                Home
+              </Text>
+            </Flex>
+          </Link>
         </Flex>
         <Flex display={{ base: "none", sm: "flex" }} ml={10}>
           <DesktopNav navItems={navItems} />
