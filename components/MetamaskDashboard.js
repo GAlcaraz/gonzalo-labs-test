@@ -9,10 +9,13 @@ import {
   faArrowsRotate,
   faSquarePlus,
 } from "@fortawesome/free-solid-svg-icons";
+import { useRouter } from "next/router";
 
 const Dashboard = () => {
   const { connect, metaState } = useMetamask();
   const toast = useToast();
+  const router = useRouter();
+  const [isConnected, setIsConnected] = useState(false);
   const [buttonAddLoading, setButtonAddLoading] = useState(false);
   const [buttonSwitchLoading, setButtonSwitchLoading] = useState(false);
 
@@ -21,6 +24,7 @@ const Dashboard = () => {
       (async () => {
         try {
           await connect(ethers.providers.Web3Provider, "any");
+          setIsConnected(true);
         } catch (e) {
           console.log(e);
         }
@@ -97,7 +101,7 @@ const Dashboard = () => {
         overflow="hidden"
         maxW="80vw"
       >
-        {metaState.account[0]
+        {metaState.account[0] && isConnected
           ? metaState.account[0]
           : "Please connect your wallet"}
       </Text>
@@ -107,9 +111,15 @@ const Dashboard = () => {
           colorScheme="orange"
           borderRadius="md"
           type="submit"
-          onClick={connectWallet}
+          onClick={() => {
+            if (!isConnected) {
+              router.reload();
+            } else {
+              setIsConnected(false);
+            }
+          }}
         >
-          {metaState.isConnected ? "Connected" : "Connect Wallet"}
+          {isConnected ? "Disconnect" : "Connect Wallet"}
         </Button>
         <Stack direction={["column", "row"]} spacing={2}>
           <Button
