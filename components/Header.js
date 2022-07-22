@@ -13,6 +13,7 @@ import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import React from "react";
 import { faBitcoin } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRouter } from "next/router";
 
 const Header = () => {
   const { isOpen, onToggle } = useDisclosure();
@@ -76,17 +77,34 @@ const Header = () => {
 };
 
 const DesktopNav = ({ navItems }) => {
+  const router = useRouter();
+
   return (
     <Stack justify="space-between" align="center" direction={"row"} spacing={4}>
       {navItems.map((item) => (
         <Box cursor="pointer" key={item.label}>
           <Link href={item.href ?? "#"}>
             <Text
-              color="orange.500"
+              color={
+                Boolean(router.pathname.match(`^${item.href}/[^/]+$`)) ||
+                router.pathname === `${item.href}`
+                  ? "orange.900"
+                  : "orange.500"
+              }
               transition="ease-in-out"
               transitionDuration="300ms"
               _hover={{
                 color: "orange.700",
+              }}
+              _after={{
+                content: '""',
+                height: "1px",
+                display:
+                  Boolean(router.pathname.match(`^${item.href}/[^/]+$`)) ||
+                  router.pathname === `${item.href}`
+                    ? "block"
+                    : "none",
+                backgroundColor: "orange.900",
               }}
               fontWeight={500}
             >
@@ -100,6 +118,8 @@ const DesktopNav = ({ navItems }) => {
 };
 
 const MobileNav = ({ navItems }) => {
+  const router = useRouter();
+
   return (
     <Stack
       justify="center"
@@ -122,7 +142,22 @@ const MobileNav = ({ navItems }) => {
               fontWeight={600}
               transition="ease-in-out"
               transitionDuration="300ms"
-              color="orange.100"
+              color={
+                Boolean(router.pathname.match(`^${navItem.href}/[^/]+$`)) ||
+                router.pathname === `${navItem.href}`
+                  ? "black"
+                  : "orange.100"
+              }
+              _after={{
+                content: '""',
+                height: "1px",
+                display:
+                  Boolean(router.pathname.match(`^${navItem.href}/[^/]+$`)) ||
+                  router.pathname === `${navItem.href}`
+                    ? "block"
+                    : "none",
+                backgroundColor: "orange.900",
+              }}
             >
               {navItem.label}
             </Text>
