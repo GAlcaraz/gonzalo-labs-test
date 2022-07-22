@@ -97,7 +97,9 @@ const Dashboard = () => {
         overflow="hidden"
         maxW="80vw"
       >
-        {metaState.account[0]}
+        {metaState.account[0]
+          ? metaState.account[0]
+          : "Please connect your wallet"}
       </Text>
       <Stack direction="column" spacing={2}>
         <Button
