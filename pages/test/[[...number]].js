@@ -26,7 +26,7 @@ export default function Layout({ number, words, ...props }) {
         position: "top",
       });
     }
-  }, [number, toast, router.query.number]);
+  }, [number, router.query.number]);
 
   return (
     <Flex
