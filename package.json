@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest"
+    "test": "env NODE_ENV=test jest --ci"
   },
   "dependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.18.6",
