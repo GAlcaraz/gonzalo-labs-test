@@ -1,0 +1,17 @@
+{
+"presets": [
+    [
+        "next/babel",
+        {
+            "transform-runtime": {}
+        }
+    ]
+],
+    "env": {
+        "test": {
+            "plugins": [
+                "@babel/plugin-transform-modules-commonjs"
+            ]
+        }
+    }
+}

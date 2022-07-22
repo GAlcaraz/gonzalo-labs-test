@@ -59,6 +59,7 @@ export const integerToWords = (n) => {
       "Sextillion",
     ];
 
+  if (n < 0) return "Negative Number";
   n = n.toString();
   if (n == 0) return "Zero"; // check for zero
   n = "0".repeat((2 * n.length) % 3) + n; // complete digits until length is divisible by 3
