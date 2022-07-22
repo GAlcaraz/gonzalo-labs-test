@@ -36,11 +36,11 @@ const Header = () => {
         minH={"70px"}
         px={4}
         borderBottom={1}
-        borderStyle="solid"
         align="center"
         justify="space-between"
         width="100%"
         bg="white"
+        boxShadow="md"
       >
         <Flex justify="start">
           <Link href="/">

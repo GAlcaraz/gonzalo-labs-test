@@ -11,11 +11,10 @@ const Footer = () => {
       flexDirection="column"
       py={6}
       borderTop={1}
-      borderStyle="solid"
       bg="white"
       align="center"
       width="100%"
-      boxShadow="0 1px 1px #c8c8c8"
+      boxShadow="lg"
     >
       <Flex mb={3}>
         <Flex
