@@ -2,7 +2,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import Layout from "components/Layout";
 import React from "react";
 import theme from "styles/chakra";
-import { MetamaskStateProvider } from "use-metamask";
+import { MetaMaskProvider } from "metamask-react";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 
@@ -13,11 +13,11 @@ config.autoAddCss = false;
 function MyApp({ Component, pageProps }) {
   return (
     <ChakraProvider theme={theme}>
-      <MetamaskStateProvider>
+      <MetaMaskProvider>
         <Layout>
           <Component {...pageProps} />
         </Layout>
-      </MetamaskStateProvider>
+      </MetaMaskProvider>
     </ChakraProvider>
   );
 }
