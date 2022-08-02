@@ -91,7 +91,7 @@ test("response returns function result correctly", () => {
   );
 });
 
-test("not a number returns empty string", () => {
+test("not a number returns 'Not a number'", () => {
   const req = {
     query: { number: "letters" },
   };
@@ -109,7 +109,7 @@ test("not a number returns empty string", () => {
   };
 
   convert(req, res);
-  expect(json.mock.calls[0][0].number).toEqual("");
+  expect(json.mock.calls[0][0].number).toEqual("Not a number");
 });
 
 test("negative numbers return empty string ", () => {
