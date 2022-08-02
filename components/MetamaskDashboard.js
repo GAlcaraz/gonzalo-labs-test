@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import React, { useCallback, useEffect, useState } from "react";
-import { useMetaMask } from "metamask-react";
+import { useMetamask } from "use-metamask";
 import NoSsrWrapper from "./NoSsrWrapper";
 import { Button, Flex, Icon, Stack, Text, useToast } from "@chakra-ui/react";
 import { addNetwork, switchToNetwork } from "lib/metamask/networks";
@@ -12,28 +12,25 @@ import {
 import { useRouter } from "next/router";
 
 const Dashboard = () => {
-  const { connect, account } = useMetaMask();
+  const { connect, metaState } = useMetamask();
   const toast = useToast();
+  const router = useRouter();
   const [isConnected, setIsConnected] = useState(false);
   const [buttonAddLoading, setButtonAddLoading] = useState(false);
   const [buttonSwitchLoading, setButtonSwitchLoading] = useState(false);
 
   const connectWallet = useCallback(async () => {
-    if (!isConnected) {
+    if (!metaState.isConnected && metaState.isAvailable) {
       (async () => {
         try {
-          const res = await connect().then(() => {
-            if (account) {
-              setIsConnected(true);
-            }
-          });
-          console.log(res);
+          await connect(ethers.providers.Web3Provider, "any");
+          setIsConnected(true);
         } catch (e) {
           console.log(e);
         }
       })();
     }
-  }, [account, connect]);
+  }, [connect, metaState.isAvailable, metaState.isConnected]);
 
   useEffect(() => {
     connectWallet();
@@ -104,7 +101,9 @@ const Dashboard = () => {
         overflow="hidden"
         maxW="80vw"
       >
-        {isConnected && account ? account : "Please connect your wallet"}
+        {metaState.account[0] && isConnected
+          ? metaState.account[0]
+          : "Please connect your wallet"}
       </Text>
       <Stack direction="column" spacing={2}>
         <Button
@@ -114,7 +113,7 @@ const Dashboard = () => {
           type="submit"
           onClick={() => {
             if (!isConnected) {
-              connect();
+              router.reload();
             } else {
               setIsConnected(false);
             }
