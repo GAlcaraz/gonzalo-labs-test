@@ -12,86 +12,120 @@ function chunkString(str, len) {
   return arr;
 }
 
+const Ones = [
+    "",
+    "One",
+    "Two",
+    "Three",
+    "Four",
+    "Five",
+    "Six",
+    "Seven",
+    "Eight",
+    "Nine",
+    "Ten",
+    "Eleven",
+    "Twelve",
+    "Thirteen",
+    "Fourteen",
+    "Fifteen",
+    "Sixteen",
+    "Seventeen",
+    "Eighteen",
+    "Nineteen",
+  ],
+  Tens = [
+    "",
+    "",
+    "Twenty",
+    "Thirty",
+    "Forty",
+    "Fifty",
+    "Sixty",
+    "Seventy",
+    "Eighty",
+    "Ninety",
+    "Hundred",
+  ],
+  Scale = [
+    "",
+    "Thousand",
+    "Million",
+    "Billion",
+    "Trillion",
+    "Quadrillion",
+    "Quintillion",
+    "Sextillion",
+  ];
+
+const SEPARATOR_CHAR = " ";
+const NONE_CHAR = "";
+const TENS_SEPARATOR_CHAR = "-";
+
 export const integerToWords = (n) => {
-  const Ones = [
-      "",
-      "One",
-      "Two",
-      "Three",
-      "Four",
-      "Five",
-      "Six",
-      "Seven",
-      "Eight",
-      "Nine",
-      "Ten",
-      "Eleven",
-      "Twelve",
-      "Thirteen",
-      "Fourteen",
-      "Fifteen",
-      "Sixteen",
-      "Seventeen",
-      "Eighteen",
-      "Nineteen",
-    ],
-    Tens = [
-      "",
-      "",
-      "Twenty",
-      "Thirty",
-      "Forty",
-      "Fifty",
-      "Sixty",
-      "Seventy",
-      "Eighty",
-      "Ninety",
-      "Hundred",
-    ],
-    Scale = [
-      "",
-      "Thousand",
-      "Million",
-      "Billion",
-      "Trillion",
-      "Quadrillion",
-      "Quintillion",
-      "Sextillion",
-    ];
+  if (+n === 0) {
+    return "Zero"; // check for zero
+  }
 
-  if (n < 0) return "Negative Number";
+  if (!+n) {
+    return "Not a number";
+  }
+
+  if (+n < 0) {
+    return "Negative Number";
+  }
+
   n = n.toString();
-  if (n == 0) return "Zero"; // check for zero
   n = "0".repeat((2 * n.length) % 3) + n; // complete digits until length is divisible by 3
-  n = chunkString(n, 3); // separate number string into chunks of 3 digits
+  const triplets = chunkString(n, 3); // separate number string into chunks of 3 digits (triplets)
 
-  if (n.length > Scale.length) return "Too Large"; // check if larger than scale array
-  let out = "";
+  if (triplets.length > Scale.length) return "Too Large"; // check if larger than scale array
+  let out = [];
 
   return (
-    n.forEach((triplet, pos) => {
+    triplets.forEach((triplet, pos) => {
       // loop into array for each triplet
       if (+triplet) {
-        out +=
-          " " +
-          (+triplet[0] ? Ones[+triplet[0]] + " " + Tens[10] : "") + // add hundreds if necessary
-          " " +
-          (+triplet.substr(1) < 20 // check if last 2 digits form an n-teenth
-            ? Ones[+triplet.substr(1)]
-            : // if not, select corresponding tens + ones
-              Tens[+triplet[1]] +
-              (+triplet[2] ? "-" : "") +
-              Ones[+triplet[2]]) +
-          " " +
-          Scale[n.length - pos - 1]; // add corresponding scale to triplet
+        const scaleWord = Scale[triplets.length - pos - 1];
+        const tensAndOnes = +triplet.substr(1);
+        const hundredsDigit = +triplet[0];
+        const tensDigit = +triplet[1];
+        const onesDigit = +triplet[2];
+
+        if (hundredsDigit) {
+          const hundredsWords = Ones[hundredsDigit] + SEPARATOR_CHAR + Tens[10]; // Tens[10] = 'Hundred'
+
+          out.push(hundredsWords);
+        }
+
+        // if tensAndOnes are an n-teenth, look for words in the Ones word array
+        if (tensAndOnes && tensAndOnes < 20) {
+          out.push(Ones[tensAndOnes]);
+          // if not, select corresponding words from Tens array and Ones array
+          // skip if tensAndOnes is zero
+        } else if (tensAndOnes) {
+          const tensAndOnesWords =
+            Tens[tensDigit] +
+            (onesDigit ? TENS_SEPARATOR_CHAR + Ones[onesDigit] : NONE_CHAR);
+
+          out.push(tensAndOnesWords);
+        }
+
+        // add scale if applicable
+        if (scaleWord) {
+          out.push(scaleWord);
+        }
       }
     }),
-    out.replace(/\s+/g, " ").trim() // tidy up whitespaces
+    out.join(" ") // join word array with spaces
   );
 };
 
 export default function handler(req, res) {
   const { number } = req.query;
-
-  res.status(200).json({ number: integerToWords(number) });
+  try {
+    res.status(200).json({ number: integerToWords(number) });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 }
