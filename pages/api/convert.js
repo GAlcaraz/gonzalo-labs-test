@@ -63,6 +63,10 @@ const NONE_CHAR = "";
 const TENS_SEPARATOR_CHAR = "-";
 
 export const integerToWords = (n) => {
+  if (+n === 0) {
+    return "Zero"; // check for zero
+  }
+
   if (!+n) {
     return "Not a number";
   }
@@ -71,10 +75,7 @@ export const integerToWords = (n) => {
     return "Negative Number";
   }
 
-  if (+n === 0) {
-    return "Zero"; // check for zero
-  }
-
+  n = n.toString();
   n = "0".repeat((2 * n.length) % 3) + n; // complete digits until length is divisible by 3
   const triplets = chunkString(n, 3); // separate number string into chunks of 3 digits (triplets)
 
