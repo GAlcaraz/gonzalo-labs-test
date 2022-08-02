@@ -11,7 +11,8 @@ const schema = Yup.object().shape({
   number: Yup.number()
     .required("Must enter a value")
     .integer("Must be an integer")
-    .min(0, "Must be positive or zero"),
+    .min(0, "Must be positive or zero")
+    .max(999999999999999, "Number too large"),
 });
 
 export default function Layout({ number, words, ...props }) {
