@@ -83,8 +83,7 @@ const getTensAndOnes = (triplet) => {
     ? Ones[tensAndOnes]
     : // if not, select corresponding tens + ones
       Tens[tensDigit] +
-        (onesDigit ? TENS_SEPARATOR_CHAR : NONE_CHAR) +
-        Ones[onesDigit];
+        (onesDigit ? TENS_SEPARATOR_CHAR + Ones[onesDigit] : NONE_CHAR);
 };
 
 export const integerToWords = (n) => {
@@ -100,13 +99,13 @@ export const integerToWords = (n) => {
   return (
     n.forEach((triplet, pos) => {
       // loop into array for each triplet
-      const scaleWord = Scale[n.length - pos - 1];
-
       if (+triplet) {
+        const scaleWord = Scale[n.length - pos - 1];
+
         out.push(
           getHundreds(triplet) +
             getTensAndOnes(triplet) +
-            (scaleWord !== NONE_CHAR ? SEPARATOR_CHAR + scaleWord : NONE_CHAR) // add corresponding scale to triplet
+            (scaleWord ? SEPARATOR_CHAR + scaleWord : NONE_CHAR) // add corresponding scale to triplet
         );
       }
     }),
