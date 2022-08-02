@@ -63,9 +63,18 @@ const NONE_CHAR = "";
 const TENS_SEPARATOR_CHAR = "-";
 
 export const integerToWords = (n) => {
-  if (n < 0) return "Negative Number";
-  n = n.toString();
-  if (n == 0) return "Zero"; // check for zero
+  if (!+n) {
+    return "Not a number";
+  }
+
+  if (+n < 0) {
+    return "Negative Number";
+  }
+
+  if (+n === 0) {
+    return "Zero"; // check for zero
+  }
+
   n = "0".repeat((2 * n.length) % 3) + n; // complete digits until length is divisible by 3
   const triplets = chunkString(n, 3); // separate number string into chunks of 3 digits (triplets)
 
@@ -113,6 +122,9 @@ export const integerToWords = (n) => {
 
 export default function handler(req, res) {
   const { number } = req.query;
-
-  res.status(200).json({ number: integerToWords(number) });
+  try {
+    res.status(200).json({ number: integerToWords(number) });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 }
