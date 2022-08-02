@@ -62,54 +62,52 @@ const SEPARATOR_CHAR = " ";
 const NONE_CHAR = "";
 const TENS_SEPARATOR_CHAR = "-";
 
-const getHundreds = (triplet) => {
-  const hundredsDigit = +triplet[0];
-  const tensAndOnes = +triplet.substr(1);
-
-  return hundredsDigit
-    ? Ones[hundredsDigit] +
-        SEPARATOR_CHAR +
-        Tens[10] +
-        (tensAndOnes ? SEPARATOR_CHAR : NONE_CHAR)
-    : NONE_CHAR;
-};
-
-const getTensAndOnes = (triplet) => {
-  const tensAndOnes = +triplet.substr(1);
-  const tensDigit = +triplet[1];
-  const onesDigit = +triplet[2];
-
-  return tensAndOnes < 20 // check if last 2 digits form an n-teenth
-    ? Ones[tensAndOnes]
-    : // if not, select corresponding tens + ones
-      Tens[tensDigit] +
-        (onesDigit ? TENS_SEPARATOR_CHAR + Ones[onesDigit] : NONE_CHAR);
-};
-
 export const integerToWords = (n) => {
   if (n < 0) return "Negative Number";
   n = n.toString();
   if (n == 0) return "Zero"; // check for zero
   n = "0".repeat((2 * n.length) % 3) + n; // complete digits until length is divisible by 3
-  n = chunkString(n, 3); // separate number string into chunks of 3 digits
+  const triplets = chunkString(n, 3); // separate number string into chunks of 3 digits (triplets)
 
-  if (n.length > Scale.length) return "Too Large"; // check if larger than scale array
+  if (triplets.length > Scale.length) return "Too Large"; // check if larger than scale array
   let out = [];
 
   return (
-    n.forEach((triplet, pos) => {
+    triplets.forEach((triplet, pos) => {
       // loop into array for each triplet
       if (+triplet) {
-        const scaleWord = Scale[n.length - pos - 1];
+        const scaleWord = Scale[triplets.length - pos - 1];
+        const tensAndOnes = +triplet.substr(1);
+        const hundredsDigit = +triplet[0];
+        const tensDigit = +triplet[1];
+        const onesDigit = +triplet[2];
 
-        out.push(
-          getHundreds(triplet) +
-            getTensAndOnes(triplet) +
-            (scaleWord ? SEPARATOR_CHAR + scaleWord : NONE_CHAR) // add corresponding scale to triplet
-        );
+        if (hundredsDigit) {
+          const hundredsWords = Ones[hundredsDigit] + SEPARATOR_CHAR + Tens[10]; // Tens[10] = 'Hundred'
+
+          out.push(hundredsWords);
+        }
+
+        // if tensAndOnes are an n-teenth, look for words in the Ones word array
+        if (tensAndOnes && tensAndOnes < 20) {
+          out.push(Ones[tensAndOnes]);
+          // if not, select corresponding words from Tens array and Ones array
+          // skip if tensAndOnes is zero
+        } else if (tensAndOnes) {
+          const tensAndOnesWords =
+            Tens[tensDigit] +
+            (onesDigit ? TENS_SEPARATOR_CHAR + Ones[onesDigit] : NONE_CHAR);
+
+          out.push(tensAndOnesWords);
+        }
+
+        // add scale if applicable
+        if (scaleWord) {
+          out.push(scaleWord);
+        }
       }
     }),
-    out.join(" ") // join triplets
+    out.join(" ") // join word array with spaces
   );
 };
 
