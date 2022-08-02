@@ -12,53 +12,82 @@ function chunkString(str, len) {
   return arr;
 }
 
-export const integerToWords = (n) => {
-  const Ones = [
-      "",
-      "One",
-      "Two",
-      "Three",
-      "Four",
-      "Five",
-      "Six",
-      "Seven",
-      "Eight",
-      "Nine",
-      "Ten",
-      "Eleven",
-      "Twelve",
-      "Thirteen",
-      "Fourteen",
-      "Fifteen",
-      "Sixteen",
-      "Seventeen",
-      "Eighteen",
-      "Nineteen",
-    ],
-    Tens = [
-      "",
-      "",
-      "Twenty",
-      "Thirty",
-      "Forty",
-      "Fifty",
-      "Sixty",
-      "Seventy",
-      "Eighty",
-      "Ninety",
-      "Hundred",
-    ],
-    Scale = [
-      "",
-      "Thousand",
-      "Million",
-      "Billion",
-      "Trillion",
-      "Quadrillion",
-      "Quintillion",
-      "Sextillion",
-    ];
+const Ones = [
+    "",
+    "One",
+    "Two",
+    "Three",
+    "Four",
+    "Five",
+    "Six",
+    "Seven",
+    "Eight",
+    "Nine",
+    "Ten",
+    "Eleven",
+    "Twelve",
+    "Thirteen",
+    "Fourteen",
+    "Fifteen",
+    "Sixteen",
+    "Seventeen",
+    "Eighteen",
+    "Nineteen",
+  ],
+  Tens = [
+    "",
+    "",
+    "Twenty",
+    "Thirty",
+    "Forty",
+    "Fifty",
+    "Sixty",
+    "Seventy",
+    "Eighty",
+    "Ninety",
+    "Hundred",
+  ],
+  Scale = [
+    "",
+    "Thousand",
+    "Million",
+    "Billion",
+    "Trillion",
+    "Quadrillion",
+    "Quintillion",
+    "Sextillion",
+  ];
 
+const SEPARATOR_CHAR = " ";
+const NONE_CHAR = "";
+const TENS_SEPARATOR_CHAR = "-";
+
+const getHundreds = (triplet) => {
+  const hundredsDigit = +triplet[0];
+  const tensAndOnes = +triplet.substr(1);
+
+  return hundredsDigit
+    ? Ones[hundredsDigit] +
+        SEPARATOR_CHAR +
+        Tens[10] +
+        (tensAndOnes ? SEPARATOR_CHAR : NONE_CHAR)
+    : NONE_CHAR;
+};
+
+const getTensAndOnes = (triplet) => {
+  const tensAndOnes = +triplet.substr(1);
+  const tensDigit = +triplet[1];
+  const onesDigit = +triplet[2];
+
+  return tensAndOnes < 20 // check if last 2 digits form an n-teenth
+    ? Ones[tensAndOnes]
+    : // if not, select corresponding tens + ones
+      Tens[tensDigit] +
+        (onesDigit ? TENS_SEPARATOR_CHAR : NONE_CHAR) +
+        Ones[onesDigit];
+};
+
+export const integerToWords = (n) => {
   if (n < 0) return "Negative Number";
   n = n.toString();
   if (n == 0) return "Zero"; // check for zero
@@ -66,27 +95,22 @@ export const integerToWords = (n) => {
   n = chunkString(n, 3); // separate number string into chunks of 3 digits
 
   if (n.length > Scale.length) return "Too Large"; // check if larger than scale array
-  let out = "";
+  let out = [];
 
   return (
     n.forEach((triplet, pos) => {
       // loop into array for each triplet
+      const scaleWord = Scale[n.length - pos - 1];
+
       if (+triplet) {
-        out +=
-          " " +
-          (+triplet[0] ? Ones[+triplet[0]] + " " + Tens[10] : "") + // add hundreds if necessary
-          " " +
-          (+triplet.substr(1) < 20 // check if last 2 digits form an n-teenth
-            ? Ones[+triplet.substr(1)]
-            : // if not, select corresponding tens + ones
-              Tens[+triplet[1]] +
-              (+triplet[2] ? "-" : "") +
-              Ones[+triplet[2]]) +
-          " " +
-          Scale[n.length - pos - 1]; // add corresponding scale to triplet
+        out.push(
+          getHundreds(triplet) +
+            getTensAndOnes(triplet) +
+            (scaleWord !== NONE_CHAR ? SEPARATOR_CHAR + scaleWord : NONE_CHAR) // add corresponding scale to triplet
+        );
       }
     }),
-    out.replace(/\s+/g, " ").trim() // tidy up whitespaces
+    out.join(" ") // join triplets
   );
 };
 
